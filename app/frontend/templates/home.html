@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -5,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Tienda Esotérica</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Aquí enlazas tu archivo de estilo CSS -->
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -125,21 +126,21 @@
 
         <div class="product-grid">
             <div class="product-card">
-                <img src="https://via.placeholder.com/200" alt="Producto 3">
+                <img src="{% static 'images/piedras.jpg' %}" alt="Producto 1">
                 <h3>Amuleto de Protección</h3>
                 <p>Protege tu energía y aleja las malas vibras</p>
                 <div class="price">$25.00</div>
             </div>
 
             <div class="product-card">
-                <img src="https://via.placeholder.com/200" alt="Producto 3">
+                <img src="{% static 'images/tarot.jpg' %}" alt="Producto 2">
                 <h3>Piedra de la Luna</h3>
                 <p>Para fortalecer la intuición y el amor</p>
                 <div class="price">$30.00</div>
             </div>
 
             <div class="product-card">
-                <img src="https://via.placeholder.com/200" alt="Producto 3">
+                <img src="{% static 'images/vela.jpg' %}" alt="Producto 3">
                 <h3>Candil Místico</h3>
                 <p>Ideal para rituales de meditación y paz interior</p>
                 <div class="price">$18.00</div>
