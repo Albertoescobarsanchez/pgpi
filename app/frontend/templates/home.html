@@ -1,13 +1,61 @@
-<!-- main/templates/home.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>Tienda Esotérica</title>
+    <link rel="stylesheet" href="home.css">
 </head>
 <body>
-    <h1>Bienvenido a la página inicial de mi aplicación Django</h1>
-    <p>¡Este es el inicio de nuestra aplicación!</p>
+    <header class="main-header">
+        <div class="container">
+            <h1>Tienda Esotérica</h1>
+            <nav>
+                <ul>
+                    <li><a href="#home">Inicio</a></li>
+                    <li><a href="#about">Nosotros</a></li>
+                    <li><a href="#products">Productos</a></li>
+                    <li><a href="#contact">Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="container">
+            <h2>Explora lo Mágico</h2>
+            <p>Descubre una selección de productos para conectar con tu energía interior.</p>
+            <a href="#products" class="btn">Ver Productos</a>
+        </div>
+    </section>
+
+    <section id="products" class="products">
+        <div class="container">
+            <h3>Productos Destacados</h3>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="images/vela.jpg" alt="Vela Esotérica">
+                    <h4>Velas Esotéricas</h4>
+                    <p>Atrae paz y armonía con nuestras velas.</p>
+                </div>
+                <div class="product-card">
+                    <img src="images/piedras.jpg" alt="Piedras Energéticas">
+                    <h4>Piedras Energéticas</h4>
+                    <p>Equilibra tus chakras con nuestras piedras.</p>
+                </div>
+                <div class="product-card">
+                    <img src="images/tarot.jpg" alt="Cartas de Tarot">
+                    <h4>Cartas de Tarot</h4>
+                    <p>Conecta con el universo a través del tarot.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2024 Tienda Esotérica. Todos los derechos reservados.</p>
+        </div>
+    </footer>
 </body>
 </html>
