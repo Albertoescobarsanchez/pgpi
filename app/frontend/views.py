@@ -11,3 +11,6 @@ def register(request):
 
 def cesta(request):
     return render(request, 'cesta.html')
+
+def editarUsuario(request):
+    return render(request, 'editarUsuario.html')
