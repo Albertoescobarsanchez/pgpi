@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cesta de Compras</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+    .producto {
+      display: flex;
+      justify-content: space-between;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #fff;
+    }
+    .producto button {
+      padding: 5px 10px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .producto button:hover {
+      background-color: #218838;
+    }
+    #carrito {
+      margin-top: 30px;
+      border-top: 2px solid #ddd;
+      padding-top: 20px;
+    }
+    #carrito ul {
+      list-style: none;
+      padding: 0;
+    }
+    #carrito li {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px;
+      background-color: #fff;
+      margin-bottom: 5px;
+    }
+    #total {
+      font-weight: bold;
+      padding-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Cesta de Compras</h1>
+
+  <!-- Productos -->
+  <div class="producto">
+    <span>Producto 1</span>
+    <span>$10.00</span>
+  </div>
+  <div class="producto">
+    <span>Producto 2</span>
+    <span>$20.00</span>
+  </div>
+  <div class="producto">
+    <span>Producto 3</span>
+    <span>$15.00</span>
+  </div>
+
+  <!-- Carrito -->
+  <div id="carrito">
+    <h2>Mi Carrito</h2>
+    <ul id="carrito-lista"></ul>
+    <div id="total">Total: $0.00</div>
+    <button>Comprar</button>
+
+  </div>
+
+
+
+</body>
+</html>
