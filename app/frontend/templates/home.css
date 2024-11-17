@@ -133,6 +133,9 @@ body {
 .product-card p {
     color: #d1d1d1;
 }
+img {
+    size: 500px;
+}
 
 /* Footer */
 .main-footer {
