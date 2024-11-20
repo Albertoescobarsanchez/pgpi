@@ -29,7 +29,9 @@ urlpatterns = [
     path('cesta/', views.cesta, name='cesta'),
     path('editarUsuario/', views.editarUsuario, name='editarUsuario'),
     path('editarProductos/', views.editarProductos, name='editarProductos'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout')
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('vistaProducto/', views.vistaProducto, name='vistaProducto')
+
 
 
 ]
