@@ -14,3 +14,6 @@ def cesta(request):
 
 def editarUsuario(request):
     return render(request, 'editarUsuario.html')
+    
+def editarProductos(request):
+    return render(request, 'editarProductos.html')
