@@ -17,3 +17,6 @@ def editarUsuario(request):
     
 def editarProductos(request):
     return render(request, 'editarProductos.html')
+
+def vistaProducto(request):
+    return render(request, 'vistaProducto.html')
