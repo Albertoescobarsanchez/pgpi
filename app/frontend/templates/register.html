@@ -21,8 +21,6 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
-            margin-left: 50px;  /* Margen a la izquierda */
-            margin-right: 50px; /* Margen a la derecha */
         }
         h2 {
             text-align: center;
@@ -41,6 +39,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 16px;
+            padding: 10px;
         }
         input[type="submit"] {
             width: 100%;
@@ -50,6 +49,7 @@
             border-radius: 4px;
             font-size: 16px;
             cursor: pointer;
+            padding: 10px;
         }
         input[type="submit"]:hover {
             background-color: #45a049;
@@ -59,19 +59,9 @@
 <body>
     <div class="form-container">
         <h2>Crear Cuenta</h2>
-        <form action="#" method="POST">
-            <div class="input-group">
-                <label for="username">Nombre de Usuario</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="input-group">
-                <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <div class="input-group">
-                <label for="confirmPassword">Confirmar Contraseña</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" required>
-            </div>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
             <input type="submit" value="Registrarse">
         </form>
     </div>

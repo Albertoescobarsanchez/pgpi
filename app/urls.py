@@ -19,15 +19,17 @@ from django.contrib import admin
 from django.urls import path,include
 from app.frontend import views
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
-    path('login/', views.login, name='login'),
+    path('login/', views.login_user, name='login'),
     path('register/',views.register, name='register'),
     path('cesta/', views.cesta, name='cesta'),
     path('editarUsuario/', views.editarUsuario, name='editarUsuario'),
-    path('editarProductos/', views.editarProductos, name='editarProductos')
+    path('editarProductos/', views.editarProductos, name='editarProductos'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout')
 
 
 ]

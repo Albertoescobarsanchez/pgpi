@@ -21,8 +21,8 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
-            margin-left: 50px;  /* Margen a la izquierda */
-            margin-right: 50px; /* Margen a la derecha */
+            margin-left: 50px;
+            margin-right: 50px;
         }
         h2 {
             text-align: center;
@@ -59,7 +59,8 @@
 <body>
     <div class="form-container">
         <h2>Iniciar Sesión</h2>
-        <form action="#" method="POST">
+        <form method="POST">
+            {% csrf_token %}
             <div class="input-group">
                 <label for="username">Nombre de Usuario</label>
                 <input type="text" id="username" name="username" required>
@@ -72,8 +73,5 @@
         </form>
     </div>
     <p>¿No tienes cuenta? <a href="/register">Regístrate aquí</a></p>
-
 </body>
 </html>
-
-
