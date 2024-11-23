@@ -34,8 +34,11 @@
         {% else %}
             <div class="username">¡Bienvenido visitante!</div>
             <!-- Mostrar enlaces de login y registro solo si el usuario no está autenticado -->
-            <p>¿Ya tienes cuenta? <a href="/login">Inicia Sesión aquí</a></p>
-            <p>¿No tienes cuenta? <a href="/register">Regístrate aquí</a></p>
+             <div class="botones-log">
+                <p>¿Ya tienes cuenta? <a href="/login">Inicia Sesión aquí</a></p>
+                <p>¿No tienes cuenta? <a href="/register">Regístrate aquí</a></p>
+             </div>
+
         {% endif %}
     </header>
 
@@ -48,6 +51,13 @@
     </nav>
 
     <!-- Contenido principal -->
+    <div class="search-container" style="margin-bottom: 30px; text-align: center;">
+        <form action="#" method="get" style="display: inline-block; max-width: 500px; width: 100%;">
+            <input type="text" name="search" placeholder="Buscar productos..." style="width: 80%; padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc;">
+            <button type="submit" style="padding: 10px 15px; background-color: #003366; color: white; border: none; border-radius: 5px; cursor: pointer;">Buscar</button>
+        </form>
+    </div>
+
     <div class="main-content">
         <h2>Productos Destacados</h2>
 

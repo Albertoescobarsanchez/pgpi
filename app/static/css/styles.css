@@ -4,6 +4,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f5f5f5; /* Color de fondo claro */
+    overflow-x: hidden; /* Evita el desplazamiento horizontal */
 }
 
 /* Estilo para el header */
@@ -13,13 +14,12 @@ header {
     padding: 20px 0; /* Espaciado interno */
     text-align: center;
     top: 0;
-    width: 100%;
+    width: 100%; /* Asegura que el header ocupe todo el ancho */
     z-index: 1000; /* Para que el header esté por encima de otros elementos */
     display: flex; /* Usamos flexbox para alinear el contenido */
     align-items: center; /* Centra verticalmente el contenido */
     justify-content: center; /* Centra el contenido horizontalmente */
-    padding-left: 20px; /* Añade espacio a la izquierda */
-    padding-right: 200px; /* Añade espacio a la derecha */
+    box-sizing: border-box; /* Asegura que el padding no aumente el ancho */
 }
 
 /* Estilo para la imagen del logo */
@@ -27,6 +27,7 @@ header .logo {
     width: 150px; /* Tamaño del logo */
     height: auto; /* Mantiene las proporciones de la imagen */
     margin-right: 15px; /* Espacio entre el logo y el texto */
+    padding-left: 20px;
 }
 
 /* Estilo para el texto del header */
@@ -34,10 +35,32 @@ header .header-text {
     text-align: left; /* Centra el texto */
     flex-grow: 1; /* El texto ocupa el espacio restante */
 }
-header .botones-log{
+/* Estilo para el contenedor de los botones de login y registro */
+header .botones-log {
     color: #FFD700;
-    padding-right: 50px;
+    padding-right: 50px; /* Espacio a la derecha */
+    text-align: right; /* Alinea el contenido a la derecha */
+    flex-grow: 1; /* Hace que ocupe el espacio disponible en el header */
 }
+
+/* Estilo para los párrafos dentro de .botones-log */
+header .botones-log p {
+    margin: 5px 0; /* Espaciado vertical */
+    font-size: 14px; /* Tamaño de fuente más pequeño */
+}
+
+/* Estilo para los enlaces */
+header .botones-log a {
+    color: #FFD700; /* Color dorado */
+    text-decoration: none; /* Elimina el subrayado */
+    font-weight: bold; /* Hace los enlaces en negrita */
+}
+
+/* Efecto hover para los enlaces */
+header .botones-log a:hover {
+    text-decoration: underline; /* Subraya el enlace cuando se pasa el ratón */
+}
+
 
 /* Estilo para el título */
 header h1 {
@@ -52,7 +75,10 @@ header p {
     padding-left: 450px;
     color: #fff; /* Blanco para el texto */
 }
-
+ 
+header .username{
+    padding-right: 50px;
+}
 
 /* Estilo para la barra de navegación */
 nav {
@@ -60,8 +86,9 @@ nav {
     padding: 10px 0;
     text-align: center;
     top: 80px; /* Desplaza el nav hacia abajo para no tapar el header */
-    width: 100%;
+    width: 100%; /* Asegura que el nav ocupe todo el ancho */
     z-index: 999;
+    box-sizing: border-box; /* Asegura que el padding no aumente el ancho */
 }
 
 /* Estilo para los enlaces en el nav */
@@ -81,10 +108,42 @@ nav a:hover {
 
 /* Estilo para el contenido principal */
 .main-content {
-    padding: 120px 20px 30px 20px; /* Se agrega un padding en la parte superior para no tapar el contenido */
+    padding: 50px 20px 30px 20px; /* Se agrega un padding en la parte superior para no tapar el contenido */
     text-align: center;
 }
 
+.search-container {
+    flex: 1; /* Ocupa todo el espacio disponible */
+    margin-right: 20px; /* Espacio entre el buscador y el resto del contenido */
+    display: flex;
+    justify-content: flex-start; /* Alinea el buscador a la izquierda */
+    padding-left: 20px;
+    padding-top: 20px;
+}
+
+/* Estilo para el input del buscador */
+.search-input {
+    width: 80%; /* El input ocupa el 80% del espacio del contenedor */
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Estilo para el botón de búsqueda */
+.search-button {
+    padding: 10px 15px;
+    background-color: #003366;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Efecto hover para el botón de búsqueda */
+.search-button:hover {
+    background-color: #FFD700;
+}
 /* Estilo para la cuadrícula de productos */
 .product-grid {
     display: grid;
@@ -138,6 +197,7 @@ footer {
     text-align: center;
     padding: 15px 0;
     margin-top: 30px;
+    width: 100%; /* Asegura que el footer ocupe todo el ancho */
 }
 
 /* Estilo para los enlaces en el pie de página */
