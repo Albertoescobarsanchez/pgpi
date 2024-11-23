@@ -3,9 +3,11 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from app.forms import RegistrationForm
 from django.contrib.auth import authenticate, login
+from .models import Producto
 
 def home(request):
-    return render(request, 'home.html') 
+    productos = Producto.objects.all()
+    return render(request, 'home.html',{'productos': productos}) 
 
 def login_user(request):
     print(request)
