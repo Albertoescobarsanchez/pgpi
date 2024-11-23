@@ -38,11 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app.frontend',
-    'app.backend'
+    'app'
 ]
 LOCAL_APPS = [
-    'app.frontend','app.backend'
+   'app'
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -59,7 +58,7 @@ ROOT_URLCONF = 'app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,"app/frontend/templates")],
+        'DIRS': [os.path.join(BASE_DIR,"app/templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -86,7 +85,7 @@ DATABASES = {
         'USER': 'usuario',
         'PASSWORD': 'contraseña',
         'HOST': 'localhost',  # Cambiar si el servidor no está en tu máquina local
-        'PORT': '3307',  
+        'PORT': '3306',  
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
         },
@@ -132,7 +131,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'app/frontend/static',  # Ajusta según tu estructura de carpetas
+    BASE_DIR / 'app/static',  # Ajusta según tu estructura de carpetas
 ]
 
 # Default primary key field type
