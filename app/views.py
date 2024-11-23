@@ -3,6 +3,8 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from app.forms import RegistrationForm
 from django.contrib.auth import authenticate, login
+from .models import Producto
+
 
 def home(request):
     return render(request, 'home.html') 
@@ -50,4 +52,17 @@ def editarProductos(request):
     return render(request, 'editarProductos.html')
 
 def vistaProducto(request):
-    return render(request, 'vistaProducto.html')
+    query = request.GET.get('search', '')  # Obtenemos el término de búsqueda desde la URL
+    productos = Producto.objects.all()
+
+    # Si hay una consulta de búsqueda, filtrar los productos
+    if query:
+        productos = productos.filter(
+            nombre__icontains=query) | productos.filter(descripcion__icontains=query)
+    
+    return render(request, 'vistaProducto.html', {'productos': productos, 'query': query})
+
+def buscar_productos(request):
+    query = request.GET.get('search', '')  # Obtiene la búsqueda desde la URL
+    productos = Producto.objects.filter(nombre__icontains=query)  # Filtra los productos por nombre (case-insensitive)
+    return render(request, 'productos/buscar.html', {'productos': productos, 'query': query})
