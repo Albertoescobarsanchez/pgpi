@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -55,24 +57,24 @@
   <h1>Cesta de Compras</h1>
 
   <!-- Productos -->
-  <div class="producto">
-    <span>Producto 1</span>
-    <span>$10.00</span>
-  </div>
-  <div class="producto">
-    <span>Producto 2</span>
-    <span>$20.00</span>
-  </div>
-  <div class="producto">
-    <span>Producto 3</span>
-    <span>$15.00</span>
-  </div>
-
+  {% for producto in productos %}
+            <li>
+                <h2>{{ producto.nombre }}</h2>
+                <p>{{ producto.descripcion }}</p>
+                {% if producto.imagen %}
+                    <img src="{% static 'images/' %}{{ producto.imagen }}" alt="{{ producto.nombre }}" width="200">
+                {% else %}
+                    <p>No hay imagen disponible</p>
+                {% endif %}
+            </li>
+            {% empty %}
+                <li>No hay productos disponibles.</li>
+  {% endfor %}
   <!-- Carrito -->
   <div id="carrito">
     <h2>Mi Carrito</h2>
     <ul id="carrito-lista"></ul>
-    <div id="total">Total: $0.00</div>
+    <div id="total">Total: {{ precio }}€</div>
     <button>Comprar</button>
 
   </div>

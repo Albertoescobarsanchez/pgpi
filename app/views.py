@@ -4,6 +4,7 @@ from django.contrib import messages
 from app.forms import RegistrationForm
 from django.contrib.auth import authenticate, login
 from .models import Producto
+from .models import ProductoCesta
 
 def home(request):
     productos = Producto.objects.all()
@@ -43,7 +44,14 @@ def register(request):
     return render(request, 'register.html', {'form': form})
 
 def cesta(request):
-    return render(request, 'cesta.html')
+    productos=None
+    if request.user.is_authenticated:
+        productos = ProductoCesta.objects.filter(usuario=request.user)
+    else:
+        productos = []
+    precio=sum(producto.precio for producto in productos)
+    
+    return render(request, 'cesta.html',{'productos': productos,'precio': precio})
 
 def editarUsuario(request):
     return render(request, 'editarUsuario.html')
