@@ -1,87 +1,50 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Vista Producto</title>
+    <title>Resultados de Búsqueda - Tienda Esotérica</title>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-        }
-
-        header {
-            background-color: #1C1B17;
-            color: #fff;
-            padding: 10px 0;
-            text-align: center;
-        }
-
-        header h1 {
-            margin: 0;
-        }
-
-        .product-details {
-            text-align: center;
-            padding: 30px;
-        }
-
-        .product-details img {
-            max-width: 300px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .product-details h2 {
-            font-size: 30px;
-            margin-top: 20px;
-        }
-
-        .product-details p {
-            color: #7f8c8d;
-            font-size: 18px;
-        }
-
-        .product-details .price {
-            font-size: 24px;
-            font-weight: bold;
-            margin-top: 20px;
-        }
-
-        .back-btn {
-            margin-top: 20px;
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #8000FF;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        .back-btn:hover {
-            background-color: #1abc9c;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <header>
-        <h1>Vista del Producto</h1>
-    </header>
 
-    <div class="product-details">
-        <!-- Aquí usaremos el product_id para obtener el producto desde Django -->
-
-        <img src="{% static 'images/piedras.jpg' %}" alt="Piedras Esotéricas"> <!-- Ejemplo de imagen -->
-        <h2>{{ product.name }}</h2> <!-- Nombre del producto -->
-        <p>{{ product.description }}</p> <!-- Descripción del producto -->
-        <div class="price">${{ product.price }}</div> <!-- Precio del producto -->
-
+    <!-- Formulario de búsqueda (mantenemos el formulario aquí también) -->
+    <div class="search-container" style="margin-bottom: 30px; text-align: center;">
+        <form action="{% url 'vistaProducto' %}" method="get" style="display: inline-block; max-width: 500px; width: 100%;">
+            <input type="text" name="search" placeholder="Buscar productos..." value="{{ query }}"
+                   style="width: 80%; padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc;">
+            <button type="submit" style="padding: 10px 15px; background-color: #003366; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                Buscar
+            </button>
+        </form>
     </div>
 
+    <div class="main-content">
+        <h2>Resultados de la búsqueda para: "{{ query }}"</h2>
+
+        {% if productos %}
+            <div class="product-grid">
+                {% for producto in productos %}
+                    <div class="product-card">
+                        <a href="#">
+                            {% if producto.imagen %}
+                            <img src="{% static 'images/' %}{{ producto.imagen }}" alt="{{ producto.nombre }}" width="200">
+                        {% else %}
+                            <p>No hay imagen disponible</p>
+                        {% endif %}                            <h3>{{ producto.nombre }}</h3>
+                            <p>{{ producto.descripcion }}</p>
+                            <div class="price">${{ producto.precio }}</div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No se encontraron productos que coincidan con tu búsqueda.</p>
+        {% endif %}
+    </div>
 </body>
 </html>
