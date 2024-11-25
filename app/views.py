@@ -49,7 +49,7 @@ def cesta(request):
         productos = ProductoCesta.objects.filter(usuario=request.user)
     else:
         productos = []
-    precio=sum(producto.precio for producto in productos)
+    precio=sum(producto.precio*producto.cantidad for producto in productos)
     
     return render(request, 'cesta.html',{'productos': productos,'precio': precio})
 
@@ -61,3 +61,8 @@ def editarProductos(request):
 
 def vistaProducto(request):
     return render(request, 'vistaProducto.html')
+
+def buscar_productos(request):
+    query = request.GET.get('search', '') 
+    productos = Producto.objects.filter(nombre__icontains=query)  
+    return render(request, 'productos/buscar.html', {'productos': productos, 'query': query})
