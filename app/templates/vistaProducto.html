@@ -13,38 +13,28 @@
 <body>
 
     <!-- Formulario de búsqueda (mantenemos el formulario aquí también) -->
-    <div class="search-container" style="margin-bottom: 30px; text-align: center;">
-        <form action="{% url 'vistaProducto' %}" method="get" style="display: inline-block; max-width: 500px; width: 100%;">
-            <input type="text" name="search" placeholder="Buscar productos..." value="{{ query }}"
-                   style="width: 80%; padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc;">
-            <button type="submit" style="padding: 10px 15px; background-color: #003366; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                Buscar
-            </button>
-        </form>
-    </div>
 
-    <div class="main-content">
-        <h2>Resultados de la búsqueda para: "{{ query }}"</h2>
 
-        {% if productos %}
-            <div class="product-grid">
-                {% for producto in productos %}
-                    <div class="product-card">
-                        <a href="#">
-                            {% if producto.imagen %}
-                            <img src="{% static 'images/' %}{{ producto.imagen }}" alt="{{ producto.nombre }}" width="200">
-                        {% else %}
-                            <p>No hay imagen disponible</p>
-                        {% endif %}                            <h3>{{ producto.nombre }}</h3>
-                            <p>{{ producto.descripcion }}</p>
-                            <div class="price">${{ producto.precio }}</div>
-                        </a>
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p>No se encontraron productos que coincidan con tu búsqueda.</p>
-        {% endif %}
-    </div>
+
+    {% block content %}
+      <h1>Resultados de la búsqueda para: "{{ query }}"</h1>
+    
+      <div class="product-grid">
+        {% for producto in productos %}
+          <div class="product-card">
+            <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
+            <h3>{{ producto.nombre }}</h3>
+            <p>{{ producto.descripcion }}</p>
+            <div class="price">${{ producto.precio }}</div>
+          </div>
+        {% endfor %}
+      </div>
+      
+      {% if not productos %}
+        <p>No se encontraron productos para la búsqueda "{{ query }}".</p>
+      {% endif %}
+    {% endblock %}
+    
+    
 </body>
 </html>
