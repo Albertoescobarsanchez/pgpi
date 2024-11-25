@@ -31,7 +31,8 @@ urlpatterns = [
     path('editarProductos/', views.editarProductos, name='editarProductos'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('vistaProducto/', views.vistaProducto, name='vistaProducto'),
-    path('buscar/', views.buscar_productos, name='buscar_productos')
+    path('buscar/', views.buscar_productos, name='buscar_productos'),
+    path('pasarelaPago/',views.pasarela_pago,name='pasarelaPago')
 
 
 

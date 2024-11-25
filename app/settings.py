@@ -85,7 +85,7 @@ DATABASES = {
         'USER': 'usuario',
         'PASSWORD': 'contraseña',
         'HOST': 'localhost',  # Cambiar si el servidor no está en tu máquina local
-        'PORT': '3306',  
+        'PORT': '3307',  
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
         },
