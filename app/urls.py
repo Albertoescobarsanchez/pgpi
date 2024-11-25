@@ -30,7 +30,8 @@ urlpatterns = [
     path('editarUsuario/', views.editarUsuario, name='editarUsuario'),
     path('editarProductos/', views.editarProductos, name='editarProductos'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('vistaProducto/', views.vistaProducto, name='vistaProducto')
+    path('vistaProducto/', views.vistaProducto, name='vistaProducto'),
+    path('buscar/', views.buscar_productos, name='buscar_productos')
 
 
 
