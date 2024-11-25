@@ -1,5 +1,7 @@
+from django.http import HttpResponse, JsonResponse
+from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
-
+from django.core.mail import send_mail
 from django.contrib import messages
 from app.forms import RegistrationForm
 from django.contrib.auth import authenticate, login
@@ -11,19 +13,29 @@ def home(request):
     return render(request, 'home.html',{'productos': productos}) 
 
 def login_user(request):
-    print(request)
     if request.method == "POST":
-        username = request.POST.get("username")
+        email = request.POST.get("email")
         password = request.POST.get("password")
 
+        # Buscar usuario por correo electrónico
+        try:
+            user = User.objects.get(email=email)  # Buscar al usuario por su email
+            username = user.username  # Obtener el nombre de usuario asociado
+        except User.DoesNotExist:
+            messages.error(request, "El correo electrónico no está registrado.")
+            return render(request, "login.html")  # Devolver la misma plantilla con el mensaje de error
+
+        # Autenticar usando el nombre de usuario asociado
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
             login(request, user)
-            return redirect("/")  
+            return redirect("/")  # Redirigir a la página principal
         else:
-            messages.error(request, "Nombre de usuario o contraseña incorrectos")
+            messages.error(request, "Correo o contraseña incorrectos.")
+            return render(request, "login.html")  # Devolver la misma plantilla con el mensaje de error
 
+    # En el caso de solicitudes GET, siempre devolver el formulario de inicio de sesión
     return render(request, "login.html")
 
 def register(request):
@@ -94,3 +106,4 @@ def buscar_productos(request):
     query = request.GET.get('search', '') 
     productos = Producto.objects.filter(nombre__icontains=query)  
     return render(request, 'productos/buscar.html', {'productos': productos, 'query': query})
+
