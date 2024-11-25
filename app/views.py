@@ -52,15 +52,35 @@ def editarProductos(request):
     return render(request, 'editarProductos.html')
 
 def vistaProducto(request):
-    query = request.GET.get('search', '')  # Obtenemos el término de búsqueda desde la URL
-    productos = Producto.objects.all()
-
-    # Si hay una consulta de búsqueda, filtrar los productos
-    if query:
-        productos = productos.filter(
-            nombre__icontains=query) | productos.filter(descripcion__icontains=query)
+    query = request.GET.get('search', '')
+    query_type = request.GET.get('search_type', 'nombre')  # Default search type is 'nombre'
     
-    return render(request, 'vistaProducto.html', {'productos': productos, 'query': query})
+    if query:
+        if query_type == 'nombre':
+            # Buscar por nombre del producto
+            productos = Producto.objects.filter(nombre__icontains=query)
+            print(productos)
+        elif query_type == 'precio':
+            # Buscar por precio
+            try:
+                precio = float(query)
+                productos = Producto.objects.filter(precio=precio)
+                print(productos)
+            except ValueError:
+                productos = Producto.objects.none()  # Si el valor no es un número, no hay productos
+        elif query_type == 'categoria':
+            # Buscar por categoría
+            print(query)
+            productos = Producto.objects.filter(categoria__icontains=query)
+            print(productos)
+            print(Producto.objects.filter(categoria__icontains=query))
+            print(Producto.objects)
+        else:
+            productos = Producto.objects.none()  # Si no se reconoce el tipo de búsqueda, no hay resultados
+    else:
+        productos = Producto.objects.all()  # Si no hay búsqueda, mostrar todos los productos
+    
+    return render(request, 'vistaProducto.html', {'productos': productos, 'query': query, 'query_type': query_type})
 
 def buscar_productos(request):
     query = request.GET.get('search', '')  # Obtiene la búsqueda desde la URL
