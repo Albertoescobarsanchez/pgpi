@@ -1,12 +1,14 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.core.mail import send_mail
 from django.contrib import messages
+from django.urls import reverse
 from app.forms import RegistrationForm
 from django.contrib.auth import authenticate, login
 from .models import Producto
 from .models import ProductoCesta
+from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404, redirect
 
 
@@ -109,6 +111,33 @@ def buscar_productos(request):
     productos = Producto.objects.filter(nombre__icontains=query)  
     return render(request, 'productos/buscar.html', {'productos': productos, 'query': query})
 
+def pasarela_pago(request):
+    if request.method == 'POST':
+        user_name = request.POST.get('userName')
+        user_email = request.POST.get('userEmail')
+        address = request.POST.get('address')
+        postal_code = request.POST.get('postalCode')
+        card_number = request.POST.get('cardNumber')  
+        productos = ProductoCesta.objects.filter(usuario=request.user)
+        amount = sum(producto.producto.precio * producto.cantidad for producto in productos)
+        payment_successful = True
+
+        if payment_successful:
+            subject = "Confirmación de Pago"
+            message = f"¡Gracias por tu compra!\n\nProducto(s):\n"
+            for producto in productos:
+                message += f"{producto.producto.nombre} x{producto.cantidad} - ${producto.producto.precio * producto.cantidad}\n"
+            message += f"\nTotal a Pagar: ${amount}\nDirección de Envío: {address}, {postal_code}"
+            send_mail(subject, message, 'no-reply@example.com', [user_email])
+            productos.delete()
+            return HttpResponseRedirect(reverse('home'))
+
+        return JsonResponse({'success': False})
+
+    productos = ProductoCesta.objects.filter(usuario=request.user)
+    precio = sum(producto.producto.precio * producto.cantidad for producto in productos)
+
+    return render(request, 'pasarelaPago.html', {'precio': precio})
 def ver_cesta(request):
     # Si el usuario está autenticado, usamos su id. Si no, usamos la sesión
     if request.user.is_authenticated:

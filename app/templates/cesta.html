@@ -50,6 +50,22 @@
       font-weight: bold;
       padding-top: 10px;
     }
+    .btn-comprar {
+    display: inline-block;
+    padding: 10px 20px; 
+    background-color: #007BFF;
+    color: white;          
+    text-align: center;   
+    border: none;         
+    border-radius: 5px;   
+    text-decoration: none; 
+    cursor: pointer;     
+    font-size: 16px;
+}
+
+.btn-comprar:hover {
+    background-color: #0056b3; /* Cambiar color al pasar el cursor */
+}
   </style>
 </head>
 <body>
@@ -91,7 +107,8 @@
       Total: {{ precio }}€
     </div>
 
-    <button>Comprar</button>
+    <a href="{% url 'pasarelaPago' %}" class="btn-comprar">Comprar</a>
+
   {% else %}
     <p>No hay productos en tu cesta.</p>
   {% endif %}
