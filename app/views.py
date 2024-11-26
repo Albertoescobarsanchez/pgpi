@@ -8,6 +8,8 @@ from django.contrib.auth import authenticate, login
 from .models import Producto
 from .models import ProductoCesta
 from django.core.mail import send_mail
+from django.shortcuts import render, get_object_or_404, redirect
+
 
 def home(request):
     productos = Producto.objects.all()
@@ -62,7 +64,7 @@ def cesta(request):
         productos = ProductoCesta.objects.filter(usuario=request.user)
     else:
         productos = []
-    precio=sum(producto.precio*producto.cantidad for producto in productos)
+    precio=sum(producto.producto.precio*producto.cantidad for producto in productos)
     
     return render(request, 'cesta.html',{'productos': productos,'precio': precio})
 
@@ -135,3 +137,83 @@ def pasarela_pago(request):
     precio = sum(producto.precio * producto.cantidad for producto in productos)
 
     return render(request, 'pasarelaPago.html', {'precio': precio})
+def ver_cesta(request):
+    # Si el usuario está autenticado, usamos su id. Si no, usamos la sesión
+    if request.user.is_authenticated:
+        productos_cesta = ProductoCesta.objects.filter(usuario=request.user)
+    else:
+        session_key = request.session.session_key
+        if not session_key:
+            request.session.create()  # Crear una sesión si no existe
+        productos_cesta = ProductoCesta.objects.filter(usuario=None, session_key=session_key)
+    
+    # Calcular el total
+    total_precio = sum(item.producto.precio * item.cantidad for item in productos_cesta)
+
+    return render(request, 'cesta.html', {
+        'productos': productos_cesta,
+        'precio': total_precio
+    })
+
+def agregar_a_cesta(request, producto_nombre):
+    producto = get_object_or_404(Producto, nombre=producto_nombre)
+    usuario = request.user
+
+    # Verificar si el producto ya está en la cesta
+    cesta_producto, created = ProductoCesta.objects.get_or_create(
+        usuario=usuario,
+        producto=producto,
+        cantidad = int(request.POST.get('cantidad', 1))
+    )
+
+    if not created:
+        # Si el producto ya está en la cesta, actualizamos la cantidad
+        cantidad = int(request.POST.get('cantidad', 1))  # Obtenemos la cantidad desde el formulario
+        cesta_producto.cantidad += cantidad
+        cesta_producto.save()
+
+    # Responder con un mensaje de confirmación en formato JSON
+    return JsonResponse({
+        'mensaje': f'{producto.nombre} añadido a la cesta.',
+        'cantidad': cesta_producto.cantidad
+    })
+
+def eliminar_producto(request, producto_id):
+    # Eliminar un producto de la cesta del usuario autenticado
+     # Obtener el producto en la cesta del usuario
+    producto_cesta = get_object_or_404(ProductoCesta, usuario=request.user, producto_id=producto_id)
+
+    # Obtener la cantidad que se quiere eliminar desde el formulario (por ejemplo, 'cantidad_a_eliminar')
+    cantidad_a_eliminar = int(request.POST.get('cantidad_a_eliminar', 1))
+
+    if producto_cesta.cantidad > cantidad_a_eliminar:
+        # Si hay más de la cantidad que queremos eliminar, solo restamos
+        producto_cesta.cantidad -= cantidad_a_eliminar
+        producto_cesta.save()
+    else:
+        # Si la cantidad es igual o menor, eliminamos el producto de la cesta
+        producto_cesta.delete()
+
+    return redirect('ver_cesta')
+
+def eliminar_producto_no_autenticado(request, producto_id):
+    # Eliminar un producto de la cesta para un usuario no autenticado (basado en la sesión)
+    session_key = request.session.session_key
+    if not session_key:
+        request.session.create()
+    
+     # Obtener el producto en la cesta del usuario
+    producto_cesta = get_object_or_404(ProductoCesta, usuario=request.user, producto_id=producto_id)
+
+    # Obtener la cantidad que se quiere eliminar desde el formulario (por ejemplo, 'cantidad_a_eliminar')
+    cantidad_a_eliminar = int(request.POST.get('cantidad_a_eliminar', 1))
+
+    if producto_cesta.cantidad > cantidad_a_eliminar:
+        # Si hay más de la cantidad que queremos eliminar, solo restamos
+        producto_cesta.cantidad -= cantidad_a_eliminar
+        producto_cesta.save()
+    else:
+        # Si la cantidad es igual o menor, eliminamos el producto de la cesta
+        producto_cesta.delete()
+
+    return redirect('ver_cesta')

@@ -56,30 +56,46 @@
 
   <h1>Cesta de Compras</h1>
 
-  <!-- Productos -->
-  {% for producto in productos %}
-            <li>
-                <h2>{{ producto.nombre }}</h2>
-                <p>{{ producto.descripcion }}</p>
-                {% if producto.imagen %}
-                    <img src="{% static 'images/' %}{{ producto.imagen }}" alt="{{ producto.nombre }}" width="200">
-                {% else %}
-                    <p>No hay imagen disponible</p>
-                {% endif %}
-            </li>
-            {% empty %}
-                <li>No hay productos disponibles.</li>
-  {% endfor %}
-  <!-- Carrito -->
-  <div id="carrito">
-    <h2>Mi Carrito</h2>
-    <ul id="carrito-lista"></ul>
-    <div id="total">Total: {{ precio }}€</div>
+  <!-- Productos en la cesta -->
+  {% if productos %}
+    <ul id="carrito-lista">
+      {% for item in productos %}
+        <li class="producto">
+          <div>
+            <h2>{{ item.producto.nombre }}</h2>
+            <p>{{ item.producto.descripcion }}</p>
+            {% if item.producto.imagen %}
+              <img src="{% static 'images/' %}{{ item.producto.imagen }}" alt="{{ item.producto.nombre }}" width="100">
+            {% else %}
+              <p>No hay imagen disponible</p>
+            {% endif %}
+          </div>
+          <div>
+            <p>Cantidad: {{ item.cantidad }}</p>
+            <p>Precio: {{ item.producto.precio }}€</p>
+
+            <!-- Botón de eliminar producto -->
+            <form action="{% url 'eliminar_producto' item.producto.id %}" method="post">
+              {% csrf_token %}
+              <!-- Campo para cantidad a eliminar -->
+              <label for="cantidad_a_eliminar">Cantidad a eliminar:</label>
+              <input type="number" name="cantidad_a_eliminar" id="cantidad_a_eliminar" value="1" min="1" max="{{ item.cantidad }}">
+              <button type="submit">Eliminar</button>
+            </form>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <div id="total">
+      Total: {{ precio }}€
+    </div>
+
     <a href="{% url 'pasarelaPago' %}" class="btn-comprar">Comprar</a>
 
-  </div>
-
-
+  {% else %}
+    <p>No hay productos en tu cesta.</p>
+  {% endif %}
 
 </body>
 </html>
