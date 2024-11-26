@@ -7,6 +7,8 @@ from app.forms import RegistrationForm
 from django.contrib.auth import authenticate, login
 from .models import Producto
 from .models import ProductoCesta
+from django.shortcuts import render, get_object_or_404, redirect
+
 
 def home(request):
     productos = Producto.objects.all()
@@ -107,3 +109,61 @@ def buscar_productos(request):
     productos = Producto.objects.filter(nombre__icontains=query)  
     return render(request, 'productos/buscar.html', {'productos': productos, 'query': query})
 
+def ver_cesta(request):
+    # Si el usuario está autenticado, usamos su id. Si no, usamos la sesión
+    if request.user.is_authenticated:
+        productos_cesta = ProductoCesta.objects.filter(usuario=request.user)
+    else:
+        session_key = request.session.session_key
+        if not session_key:
+            request.session.create()  # Crear una sesión si no existe
+        productos_cesta = ProductoCesta.objects.filter(usuario=None, session_key=session_key)
+    
+    # Calcular el total
+    total_precio = sum(item.producto.precio * item.cantidad for item in productos_cesta)
+
+    return render(request, 'cesta.html', {
+        'productos': productos_cesta,
+        'precio': total_precio
+    })
+
+def agregar_a_cesta(request, producto_nombre):
+    producto = get_object_or_404(Producto, nombre=producto_nombre)
+    usuario = request.user
+
+    # Verificar si el producto ya está en la cesta
+    cesta_producto, created = ProductoCesta.objects.get_or_create(
+        usuario=usuario,
+        producto=producto,
+        defaults={'cantidad': 1}
+    )
+
+    if not created:
+        # Si el producto ya está en la cesta, actualizamos la cantidad
+        cantidad = int(request.POST.get('cantidad', 1))  # Obtenemos la cantidad desde el formulario
+        cesta_producto.cantidad += cantidad
+        cesta_producto.save()
+
+    # Responder con un mensaje de confirmación en formato JSON
+    return JsonResponse({
+        'mensaje': f'{producto.nombre} añadido a la cesta.',
+        'cantidad': cesta_producto.cantidad
+    })
+
+def eliminar_producto(request, producto_id):
+    # Eliminar un producto de la cesta del usuario autenticado
+    producto_cesta = get_object_or_404(ProductoCesta, usuario=request.user, producto_id=producto_id)
+    producto_cesta.delete()
+
+    return redirect('ver_cesta')
+
+def eliminar_producto_no_autenticado(request, producto_id):
+    # Eliminar un producto de la cesta para un usuario no autenticado (basado en la sesión)
+    session_key = request.session.session_key
+    if not session_key:
+        request.session.create()
+    
+    producto_cesta = get_object_or_404(ProductoCesta, usuario=None, session_key=session_key, producto_id=producto_id)
+    producto_cesta.delete()
+
+    return redirect('ver_cesta')

@@ -31,7 +31,11 @@ urlpatterns = [
     path('editarProductos/', views.editarProductos, name='editarProductos'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('vistaProducto/', views.vistaProducto, name='vistaProducto'),
-    path('buscar/', views.buscar_productos, name='buscar_productos')
+    path('buscar/', views.buscar_productos, name='buscar_productos'),
+    path('agregar-a-cesta/<str:producto_nombre>/', views.agregar_a_cesta, name='agregar_a_cesta'),
+    path('ver-cesta/', views.ver_cesta, name='ver_cesta'),    path('ver-cesta/', views.ver_cesta, name='ver_cesta'),
+    path('eliminar-producto/<int:producto_id>/', views.eliminar_producto, name='eliminar_producto'),
+    path('eliminar-producto-no-autenticado/<int:producto_id>/', views.eliminar_producto_no_autenticado, name='eliminar_producto_no_autenticado')
 
 
 
