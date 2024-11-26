@@ -1,8 +1,9 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.core.mail import send_mail
 from django.contrib import messages
+from django.urls import reverse
 from app.forms import RegistrationForm
 from django.contrib.auth import authenticate, login
 from .models import Producto
@@ -118,23 +119,23 @@ def pasarela_pago(request):
         postal_code = request.POST.get('postalCode')
         card_number = request.POST.get('cardNumber')  
         productos = ProductoCesta.objects.filter(usuario=request.user)
-        amount = sum(producto.precio * producto.cantidad for producto in productos)
+        amount = sum(producto.producto.precio * producto.cantidad for producto in productos)
         payment_successful = True
 
         if payment_successful:
             subject = "Confirmación de Pago"
             message = f"¡Gracias por tu compra!\n\nProducto(s):\n"
             for producto in productos:
-                message += f"{producto.nombre} x{producto.cantidad} - ${producto.precio * producto.cantidad}\n"
+                message += f"{producto.producto.nombre} x{producto.cantidad} - ${producto.producto.precio * producto.cantidad}\n"
             message += f"\nTotal a Pagar: ${amount}\nDirección de Envío: {address}, {postal_code}"
             send_mail(subject, message, 'no-reply@example.com', [user_email])
             productos.delete()
-            return JsonResponse({'success': True})
+            return HttpResponseRedirect(reverse('home'))
 
         return JsonResponse({'success': False})
 
     productos = ProductoCesta.objects.filter(usuario=request.user)
-    precio = sum(producto.precio * producto.cantidad for producto in productos)
+    precio = sum(producto.producto.precio * producto.cantidad for producto in productos)
 
     return render(request, 'pasarelaPago.html', {'precio': precio})
 def ver_cesta(request):

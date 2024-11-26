@@ -85,7 +85,7 @@ DATABASES = {
         'USER': 'usuario',
         'PASSWORD': 'contraseña',
         'HOST': 'localhost',  # Cambiar si el servidor no está en tu máquina local
-        'PORT': '3307',  
+        'PORT': '3306',  
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
         },
@@ -138,3 +138,5 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
