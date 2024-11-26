@@ -63,7 +63,7 @@ def cesta(request):
         productos = ProductoCesta.objects.filter(usuario=request.user)
     else:
         productos = []
-    precio=sum(producto.precio*producto.cantidad for producto in productos)
+    precio=sum(producto.producto.precio*producto.cantidad for producto in productos)
     
     return render(request, 'cesta.html',{'productos': productos,'precio': precio})
 
@@ -135,7 +135,7 @@ def agregar_a_cesta(request, producto_nombre):
     cesta_producto, created = ProductoCesta.objects.get_or_create(
         usuario=usuario,
         producto=producto,
-        defaults={'cantidad': 1}
+        cantidad = int(request.POST.get('cantidad', 1))
     )
 
     if not created:
@@ -152,8 +152,19 @@ def agregar_a_cesta(request, producto_nombre):
 
 def eliminar_producto(request, producto_id):
     # Eliminar un producto de la cesta del usuario autenticado
+     # Obtener el producto en la cesta del usuario
     producto_cesta = get_object_or_404(ProductoCesta, usuario=request.user, producto_id=producto_id)
-    producto_cesta.delete()
+
+    # Obtener la cantidad que se quiere eliminar desde el formulario (por ejemplo, 'cantidad_a_eliminar')
+    cantidad_a_eliminar = int(request.POST.get('cantidad_a_eliminar', 1))
+
+    if producto_cesta.cantidad > cantidad_a_eliminar:
+        # Si hay más de la cantidad que queremos eliminar, solo restamos
+        producto_cesta.cantidad -= cantidad_a_eliminar
+        producto_cesta.save()
+    else:
+        # Si la cantidad es igual o menor, eliminamos el producto de la cesta
+        producto_cesta.delete()
 
     return redirect('ver_cesta')
 
@@ -163,7 +174,18 @@ def eliminar_producto_no_autenticado(request, producto_id):
     if not session_key:
         request.session.create()
     
-    producto_cesta = get_object_or_404(ProductoCesta, usuario=None, session_key=session_key, producto_id=producto_id)
-    producto_cesta.delete()
+     # Obtener el producto en la cesta del usuario
+    producto_cesta = get_object_or_404(ProductoCesta, usuario=request.user, producto_id=producto_id)
+
+    # Obtener la cantidad que se quiere eliminar desde el formulario (por ejemplo, 'cantidad_a_eliminar')
+    cantidad_a_eliminar = int(request.POST.get('cantidad_a_eliminar', 1))
+
+    if producto_cesta.cantidad > cantidad_a_eliminar:
+        # Si hay más de la cantidad que queremos eliminar, solo restamos
+        producto_cesta.cantidad -= cantidad_a_eliminar
+        producto_cesta.save()
+    else:
+        # Si la cantidad es igual o menor, eliminamos el producto de la cesta
+        producto_cesta.delete()
 
     return redirect('ver_cesta')

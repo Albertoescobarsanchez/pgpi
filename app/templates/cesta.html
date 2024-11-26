@@ -77,6 +77,9 @@
             <!-- Botón de eliminar producto -->
             <form action="{% url 'eliminar_producto' item.producto.id %}" method="post">
               {% csrf_token %}
+              <!-- Campo para cantidad a eliminar -->
+              <label for="cantidad_a_eliminar">Cantidad a eliminar:</label>
+              <input type="number" name="cantidad_a_eliminar" id="cantidad_a_eliminar" value="1" min="1" max="{{ item.cantidad }}">
               <button type="submit">Eliminar</button>
             </form>
           </div>
