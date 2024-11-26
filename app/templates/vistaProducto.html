@@ -21,20 +21,77 @@
     
       <div class="product-grid">
         {% for producto in productos %}
-          <div class="product-card">
-            <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
-            <h3>{{ producto.nombre }}</h3>
-            <p>{{ producto.descripcion }}</p>
-            <div class="price">${{ producto.precio }}</div>
-          </div>
-        {% endfor %}
-      </div>
+        <div class="producto">
+          <h2>{{ producto.nombre }}</h2>
+          <p>{{ producto.descripcion }}</p>
+          <img src="{% static 'images/' %}{{ producto.imagen }}" alt="{{ producto.nombre }}" width="200">
       
-      {% if not productos %}
+          <!-- Formulario para agregar el producto a la cesta -->
+          <form class="form-cesta" data-producto="{{ producto.nombre }}" method="post" action="{% url 'agregar_a_cesta' producto.nombre %}" id="form-cesta-{{ producto.nombre }}">
+            {% csrf_token %}
+            
+            <!-- Botones para aumentar y disminuir la cantidad -->
+            <button type="button" class="btn-cantidad" onclick="cambiarCantidad('{{ producto.nombre }}', -1)">-</button>
+            <input type="text" name="cantidad" id="cantidad-{{ producto.nombre }}" value="1" readonly>
+            <button type="button" class="btn-cantidad" onclick="cambiarCantidad('{{ producto.nombre }}', 1)">+</button>
+            
+            <!-- Botón para agregar a la cesta -->
+            <button type="submit">Añadir a la cesta</button>
+          </form>
+          
+          <!-- Alerta de confirmación -->
+          <div id="alerta-{{ producto.nombre }}" style="display:none; color: green;">
+            <strong>¡Producto añadido!</strong> Cantidad: <span id="cantidad-alerta-{{ producto.nombre }}">1</span>
+          </div>
+        </div>
+      {% endfor %}
+      
         <p>No se encontraron productos para la búsqueda "{{ query }}".</p>
-      {% endif %}
     {% endblock %}
     
     
 </body>
 </html>
+
+<script>
+  // Función para aumentar o disminuir la cantidad
+  function cambiarCantidad(nombreProducto, incremento) {
+    const cantidadInput = document.getElementById(`cantidad-${nombreProducto}`);
+    let cantidad = parseInt(cantidadInput.value);
+    cantidad += incremento;
+
+    // Evitar que la cantidad sea menor que 1
+    if (cantidad < 1) cantidad = 1;
+
+    cantidadInput.value = cantidad;
+  }
+
+  // Enviar el formulario y mostrar la alerta con la cantidad
+  document.querySelectorAll('.form-cesta').forEach(form => {
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const nombreProducto = this.dataset.producto;
+      const cantidad = document.getElementById(`cantidad-${nombreProducto}`).value;
+
+      // Enviar la solicitud Ajax
+      fetch(this.action, {
+        method: 'POST',
+        body: new FormData(this)
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Mostrar la alerta con la cantidad
+        document.getElementById(`cantidad-alerta-${nombreProducto}`).textContent = data.cantidad;
+        document.getElementById(`alerta-${nombreProducto}`).style.display = 'block';
+        
+        // Desaparecer la alerta después de 3 segundos
+        setTimeout(() => {
+          document.getElementById(`alerta-${nombreProducto}`).style.display = 'none';
+        }, 3000);
+      })
+      .catch(error => console.log('Error al agregar el producto:', error));
+    });
+  });
+</script>
+

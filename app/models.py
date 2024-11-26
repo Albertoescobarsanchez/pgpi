@@ -13,3 +13,6 @@ class ProductoCesta(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField(default=1)
+    def __str__(self):
+        return f"{self.producto.nombre} - {self.cantidad} en cesta"
+
