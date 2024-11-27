@@ -1,0 +1,221 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Pedidos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .pedido {
+            border-bottom: 1px solid #ddd;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+
+        .pedido h3 {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .pedido p {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .pedido ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .pedido ul li {
+            font-size: 16px;
+            color: #555;
+            margin: 5px 0;
+        }
+
+        .pedido ul li strong {
+            color: #333;
+        }
+
+        .pedido p strong {
+            color: #333;
+        }
+
+        .estado-pedido {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .estado-pedido .icon {
+            margin-right: 10px;
+        }
+
+        .en-proceso {
+            color: #ff9800; /* Naranja */
+        }
+
+        .enviado {
+            color: #2196f3; /* Azul */
+        }
+
+        .entregado {
+            color: #4caf50; /* Verde */
+        }
+
+        .total-pedido {
+            font-size: 18px;
+            font-weight: bold;
+            color: #28a745;
+            margin-top: 10px;
+        }
+
+        .no-pedidos {
+            text-align: center;
+            color: #555;
+        }
+
+        .no-pedidos h3 {
+            font-size: 24px;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .no-pedidos p {
+            font-size: 16px;
+            margin: 10px 0;
+            color: #666;
+        }
+
+        .email-form {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .email-form input[type="email"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 70%;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .email-form button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .email-form button:hover {
+            background-color: #0056b3;
+        }
+
+        .producto-imagen {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: cover;
+            margin-right: 10px;
+            border-radius: 5px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Mis Pedidos</h2>
+
+        {% if not pedidos_info %}
+            {% if not request.user.is_authenticated %}
+                {% if not no_pedidos %}
+                    <div class="email-form">
+                        <p>Por favor, ingresa tu correo electrónico para ver tus pedidos.</p>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="email" name="email" placeholder="Correo Electrónico" required>
+                            <button type="submit">Ver Pedidos</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="no-pedidos">
+                        <h3>Aún no tienes pedidos</h3>
+                        <p>Parece que no tienes pedidos realizados con el correo proporcionado.</p>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="no-pedidos">
+                    <h3>Aún no tienes pedidos</h3>
+                    <p>Parece que no has realizado ninguna compra todavía. Explora nuestra tienda y encuentra algo especial para ti.</p>
+                </div>
+            {% endif %}
+        {% else %}
+            {% for pedido in pedidos_info %}
+                <div class="pedido">
+                    <p><strong>Fecha de pedido:</strong> {{ pedido.fecha }}</p>
+
+                    <p class="estado-pedido {% if pedido.estado == 'PENDIENTE' %}pendiente{% elif pedido.estado == 'EN_PROCESO' %}en-proceso{% elif pedido.estado == 'COMPLETADO' %}completado{% endif %}">
+                        Estado: {{ pedido.estado|default:"Estado desconocido" }}
+                        
+                        {% if pedido.estado == 'PENDIENTE' %}
+                            <span class="icon">⏳</span>
+                        {% elif pedido.estado == 'EN_PROCESO' %}
+                            <span class="icon">🔄</span>
+                        {% elif pedido.estado == 'COMPLETADO' %}
+                            <span class="icon">✅</span>
+                        {% endif %}
+                    </p>
+
+                    <h4>Productos en el Pedido:</h4>
+                    <ul>
+                        {% for producto in pedido.productos %}
+                            <li>
+                                <strong>{{ producto.nombre }}</strong> -
+                                {% if producto.imagen %}
+                                    <img src="{% static 'images/' %}{{ producto.imagen }}" alt="{{ producto.nombre }}" class="producto-imagen">
+                                {% else %}
+                                    <span>No hay imagen disponible</span>
+                                {% endif %}
+                                {{ producto.cantidad }} x ${{ producto.precio }} = ${{ producto.total }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <p class="total-pedido"><strong>Total del Pedido:</strong> ${{ pedido.total_pedido }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+</body>
+</html>

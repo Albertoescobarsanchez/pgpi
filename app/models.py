@@ -15,4 +15,26 @@ class ProductoCesta(models.Model):
     cantidad = models.PositiveIntegerField(default=1)
     def __str__(self):
         return f"{self.producto.nombre} - {self.cantidad} en cesta"
+    
+class Pedido(models.Model):
+    class EstadoPedido(models.TextChoices):
+        PENDIENTE = 'PENDIENTE', 'Pendiente'
+        EN_PROCESO = 'EN_PROCESO', 'En Proceso'
+        COMPLETADO = 'COMPLETADO', 'Completado'
 
+    email = models.EmailField()  
+    fecha = models.DateTimeField(auto_now_add=True)
+    direccion = models.TextField()
+    codigo_postal = models.CharField(max_length=10)
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    estado =  models.CharField(
+        max_length=10,
+        choices=EstadoPedido.choices,
+        default=EstadoPedido.PENDIENTE,  
+    )
+
+
+class ProductoPedido(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='productos')
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField()

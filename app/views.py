@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.urls import reverse
 from app.forms import RegistrationForm
 from django.contrib.auth import authenticate, login
-from .models import Producto
+from .models import Pedido, Producto, ProductoPedido
 from .models import ProductoCesta
 from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404, redirect
@@ -123,6 +123,20 @@ def pasarela_pago(request):
         payment_successful = True
 
         if payment_successful:
+            pedido = Pedido.objects.create(
+                email=user_email,
+                direccion=address,
+                codigo_postal=postal_code,
+                total=amount
+                
+            )
+            for item in productos:
+                ProductoPedido.objects.create(
+                    pedido=pedido,
+                    producto=item.producto,
+                    cantidad=item.cantidad
+                )
+
             subject = "Confirmación de Pago"
             message = f"¡Gracias por tu compra!\n\nProducto(s):\n"
             for producto in productos:
@@ -130,7 +144,7 @@ def pasarela_pago(request):
             message += f"\nTotal a Pagar: ${amount}\nDirección de Envío: {address}, {postal_code}"
             send_mail(subject, message, 'no-reply@example.com', [user_email])
             productos.delete()
-            return HttpResponseRedirect(reverse('home'))
+            return HttpResponseRedirect(reverse('pedidos'))
 
         return JsonResponse({'success': False})
 
@@ -218,3 +232,46 @@ def eliminar_producto_no_autenticado(request, producto_id):
         producto_cesta.delete()
 
     return redirect('ver_cesta')
+
+from django.shortcuts import render
+from .models import Pedido
+
+def pedidos(request):
+    pedidos_info = []
+    no_pedidos = False
+
+    if request.user.is_authenticated:
+        # Si el usuario está autenticado, buscar pedidos asociados a su correo.
+        pedidos = Pedido.objects.filter(email=request.user.email).order_by('-fecha')
+    else:
+        # Si no está autenticado, manejar el caso del formulario de correo.
+        email = request.POST.get('email')  # Capturar el correo desde el formulario.
+        if email:
+            pedidos = Pedido.objects.filter(email=email).order_by('-fecha')
+            if not pedidos:
+                no_pedidos = True
+        else:
+            pedidos = None
+
+    if pedidos:
+        # Preparar información de los pedidos si existen.
+        for pedido in pedidos:
+            productos_info = []
+            for producto_pedido in pedido.productos.all():
+                total_producto = producto_pedido.producto.precio * producto_pedido.cantidad
+                productos_info.append({
+                    'nombre': producto_pedido.producto.nombre,
+                    'cantidad': producto_pedido.cantidad,
+                    'precio': producto_pedido.producto.precio,
+                    'total': total_producto,
+                    'imagen':producto_pedido.producto.imagen
+                })
+            total_pedido = sum(producto['total'] for producto in productos_info)  # Total del pedido
+            pedidos_info.append({
+                'fecha': pedido.fecha,
+                'productos': productos_info,
+                'total_pedido': total_pedido,
+                'estado': pedido.estado
+            })
+
+    return render(request, 'pedidos.html', {'pedidos_info': pedidos_info, 'no_pedidos': no_pedidos})
