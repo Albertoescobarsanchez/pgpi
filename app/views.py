@@ -10,6 +10,8 @@ from .models import Pedido, Producto, ProductoPedido
 from .models import ProductoCesta
 from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render
+from .models import Pedido
 
 
 def home(request):
@@ -239,8 +241,6 @@ def eliminar_producto_no_autenticado(request, producto_id):
 
     return redirect('ver_cesta')
 
-from django.shortcuts import render
-from .models import Pedido
 
 def pedidos(request):
     pedidos_info = []

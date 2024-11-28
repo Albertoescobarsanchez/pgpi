@@ -1,27 +1,54 @@
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Resultados de Búsqueda - Tienda Esotérica</title>
-
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+<!-- Vincular el archivo CSS externo -->
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
+    <!-- Header con logo y texto -->
+    <header>
+        <div class="logo">
+            <img src="{% static 'images/EsoterUS.png' %}" alt="EsoterUS" class="logo">
+         </div>
+         <div class="header-text">
+            <h1>Tienda Esotérica</h1>
+            <p>¡Este es el inicio de nuestra aplicación!</p>
+            <p>Bienvenido al mundo de los productos místicos y espirituales</p>
+         </div>
+        
+        {% if user.is_authenticated %}
+            <div class="username">
+                Bienvenido, {{ user.username }} | 
+                <form method="POST" action="{% url 'logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background: none; border: none; color: #fff; font-weight: bold;">Cerrar sesión</button>
+                </form>
+            </div>
+        {% else %}
+            <div class="username">¡Bienvenido visitante!</div>
+            <div class="botones-log">
+                <p>¿Ya tienes cuenta? <a href="/login">Inicia Sesión aquí</a></p>
+                <p>¿No tienes cuenta? <a href="/register">Regístrate aquí</a></p>
+            </div>
+        {% endif %}
+    </header>
+
+    <!-- Barra de navegación -->
+    <nav>
+        <a href="/">Inicio</a>
+        <a href="/editarProductos">Productos</a>
+        <a href="/cesta">Cesta</a>
+        <a href="/editarUsuario">Usuarios</a>
+        <a href="/pedidos">Mis Pedidos</a>
+    </nav>
 
     <!-- Formulario de búsqueda (mantenemos el formulario aquí también) -->
-
-
 
     {% block content %}
       <h1>Resultados de la búsqueda para: "{{ query }}"</h1>
     
       <div class="product-grid">
         {% for producto in productos %}
-        <div class="producto">
+        <div class="product-card">
           <h2>{{ producto.nombre }}</h2>
           <p>{{ producto.descripcion }}</p>
           <img src="{% static 'images/' %}{{ producto.imagen }}" alt="{{ producto.nombre }}" width="200">
@@ -46,7 +73,6 @@
         </div>
       {% endfor %}
     {% endblock %}
-    
     
 </body>
 </html>
@@ -92,4 +118,3 @@
     });
   });
 </script>
-

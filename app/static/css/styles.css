@@ -108,7 +108,7 @@ nav a:hover {
 
 /* Estilo para el contenido principal */
 .main-content {
-    padding: 50px 20px 30px 20px; /* Se agrega un padding en la parte superior para no tapar el contenido */
+    padding: 0px 20px 30px 20px; /* Se agrega un padding en la parte superior para no tapar el contenido */
     text-align: center;
 }
 
@@ -164,10 +164,13 @@ nav a:hover {
 
 /* Estilo para las imágenes de los productos */
 .product-card img {
-    max-width: 100%;
+    width: 100%; /* Hace que la imagen ocupe todo el ancho de la tarjeta */
+    height: 220px; /* Establece una altura fija para todas las imágenes */
+    object-fit: cover; /* Recorta la imagen para que se ajuste sin distorsionar */
     border-radius: 10px;
+    display: block; /* Elimina espacio debajo de la imagen */
+    margin-bottom: 20px;
 }
-
 /* Estilo para los nombres de los productos */
 .product-card h3 {
     font-size: 20px;
