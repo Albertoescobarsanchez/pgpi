@@ -160,22 +160,28 @@ def agregar_a_cesta(request, producto_nombre):
     producto = get_object_or_404(Producto, nombre=producto_nombre)
     usuario = request.user
 
-    # Verificar si el producto ya está en la cesta
-    cesta_producto, created = ProductoCesta.objects.get_or_create(
-        usuario=usuario,
-        producto=producto,
-        cantidad = int(request.POST.get('cantidad', 1))
-    )
+    # Obtener la cantidad desde el formulario
+    cantidad = int(request.POST.get('cantidad', 1))
 
-    if not created:
-        # Si el producto ya está en la cesta, actualizamos la cantidad
-        cantidad = int(request.POST.get('cantidad', 1))  # Obtenemos la cantidad desde el formulario
+    # Verificar si el producto ya está en la cesta
+    try:
+        cesta_producto = ProductoCesta.objects.get(usuario=usuario, producto=producto)
+        # Si ya existe, actualizamos la cantidad
         cesta_producto.cantidad += cantidad
         cesta_producto.save()
+        mensaje = f'{producto.nombre} actualizado en la cesta.'
+    except ProductoCesta.DoesNotExist:
+        # Si no existe, creamos una nueva entrada
+        cesta_producto = ProductoCesta.objects.create(
+            usuario=usuario,
+            producto=producto,
+            cantidad=cantidad
+        )
+        mensaje = f'{producto.nombre} añadido a la cesta.'
 
     # Responder con un mensaje de confirmación en formato JSON
     return JsonResponse({
-        'mensaje': f'{producto.nombre} añadido a la cesta.',
+        'mensaje': mensaje,
         'cantidad': cesta_producto.cantidad
     })
 
