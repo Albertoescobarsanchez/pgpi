@@ -71,12 +71,6 @@ def cesta(request):
     
     return render(request, 'cesta.html',{'productos': productos,'precio': precio})
 
-def editarUsuario(request):
-    return render(request, 'editarUsuario.html')
-    
-def editarProductos(request):
-    return render(request, 'editarProductos.html')
-
 def vistaProducto(request):
     query = request.GET.get('search', '')
     query_type = request.GET.get('search_type', 'nombre')  # Default search type is 'nombre'
