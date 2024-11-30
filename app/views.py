@@ -61,16 +61,6 @@ def register(request):
 
     return render(request, 'register.html', {'form': form})
 
-def cesta(request):
-    productos=None
-    if request.user.is_authenticated:
-        productos = ProductoCesta.objects.filter(usuario=request.user)
-    else:
-        productos = []
-    precio=sum(producto.producto.precio*producto.cantidad for producto in productos)
-    
-    return render(request, 'cesta.html',{'productos': productos,'precio': precio})
-
 def vistaProducto(request):
     query = request.GET.get('search', '')
     query_type = request.GET.get('search_type', 'nombre')  # Default search type is 'nombre'
@@ -108,13 +98,22 @@ def buscar_productos(request):
     return render(request, 'productos/buscar.html', {'productos': productos, 'query': query})
 
 def pasarela_pago(request):
+    if request.user.is_authenticated:
+        productos = ProductoCesta.objects.filter(usuario=request.user)
+    else:
+        session_key = request.session.session_key
+        if not session_key:
+            request.session.create()
+            session_key = request.session.session_key
+        productos = ProductoCesta.objects.filter(usuario=None, session_key=session_key)
+
     if request.method == 'POST':
-        user_name = request.POST.get('userName')
-        user_email = request.POST.get('userEmail')
+        user_name = request.POST.get('name')
+        user_email = request.POST.get('email')
         address = request.POST.get('address')
         postal_code = request.POST.get('postalCode')
         card_number = request.POST.get('cardNumber')  
-        productos = ProductoCesta.objects.filter(usuario=request.user)
+        
         amount = sum(producto.producto.precio * producto.cantidad for producto in productos)
         payment_successful = True
 
@@ -144,18 +143,17 @@ def pasarela_pago(request):
 
         return JsonResponse({'success': False})
 
-    productos = ProductoCesta.objects.filter(usuario=request.user)
     precio = sum(producto.producto.precio * producto.cantidad for producto in productos)
 
     return render(request, 'pasarelaPago.html', {'precio': precio})
-def ver_cesta(request):
-    # Si el usuario está autenticado, usamos su id. Si no, usamos la sesión
+def cesta(request):
     if request.user.is_authenticated:
         productos_cesta = ProductoCesta.objects.filter(usuario=request.user)
     else:
         session_key = request.session.session_key
         if not session_key:
-            request.session.create()  # Crear una sesión si no existe
+            request.session.create()
+            session_key = request.session.session_key
         productos_cesta = ProductoCesta.objects.filter(usuario=None, session_key=session_key)
     
     # Calcular el total
@@ -168,14 +166,21 @@ def ver_cesta(request):
 
 def agregar_a_cesta(request, producto_nombre):
     producto = get_object_or_404(Producto, nombre=producto_nombre)
-    usuario = request.user
-
     # Obtener la cantidad desde el formulario
     cantidad = int(request.POST.get('cantidad', 1))
+    if request.user.is_authenticated:
+        usuario = request.user
+        session_key = None
+    else:
+        usuario = None
+        session_key = request.session.session_key
+        if not session_key:
+            request.session.create()  # Crear una sesión si no existe
+            session_key = request.session.session_key
 
     # Verificar si el producto ya está en la cesta
     try:
-        cesta_producto = ProductoCesta.objects.get(usuario=usuario, producto=producto)
+        cesta_producto = ProductoCesta.objects.get(usuario=usuario, producto=producto, session_key=session_key)
         # Si ya existe, actualizamos la cantidad
         cesta_producto.cantidad += cantidad
         cesta_producto.save()
@@ -185,7 +190,8 @@ def agregar_a_cesta(request, producto_nombre):
         cesta_producto = ProductoCesta.objects.create(
             usuario=usuario,
             producto=producto,
-            cantidad=cantidad
+            cantidad=cantidad,
+            session_key=session_key
         )
         mensaje = f'{producto.nombre} añadido a la cesta.'
 
