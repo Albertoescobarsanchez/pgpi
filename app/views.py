@@ -126,11 +126,17 @@ def pasarela_pago(request):
                 
             )
             for item in productos:
+                if(item.cantidad <= item.producto.cantidad):
+                    item.producto.cantidad -= item.cantidad
+                    item.producto.save()
+
                 ProductoPedido.objects.create(
                     pedido=pedido,
                     producto=item.producto,
                     cantidad=item.cantidad
                 )
+                
+            
 
             subject = "Confirmación de Pago"
             message = f"¡Gracias por tu compra!\n\nProducto(s):\n"
@@ -146,14 +152,23 @@ def pasarela_pago(request):
     precio = sum(producto.producto.precio * producto.cantidad for producto in productos)
 
     compra=True
+    mensajes_error = []
     for pc in productos:
         if pc.producto.cantidad<pc.cantidad:
+            mensajes_error.append(
+                f"La cantidad seleccionada de '{pc.producto.nombre}' ({pc.cantidad}) supera la cantidad disponible ({pc.producto.cantidad})."
+            )
             compra=False; break
 
     if compra:
-        return render(request, 'cesta.html', {'productos': productos,'precio': precio})
+        return render(request, 'pasarelaPago.html', {'productos': productos,'precio': precio})
     else: 
-        return cesta(request)
+        return render(request, 'cesta.html', {
+            'productos': productos,
+            'precio': precio,
+            'mensajes_error': mensajes_error
+        })
+        
 def cesta(request):
     if request.user.is_authenticated:
         productos_cesta = ProductoCesta.objects.filter(usuario=request.user)
@@ -170,6 +185,7 @@ def cesta(request):
 
 def agregar_a_cesta(request, producto_nombre):
     producto = get_object_or_404(Producto, nombre=producto_nombre)
+    vista_origen = request.POST.get('origen_vista','')
     # Obtener la cantidad desde el formulario
     cantidad = int(request.POST.get('cantidad', 1))
     if request.user.is_authenticated:
@@ -200,47 +216,29 @@ def agregar_a_cesta(request, producto_nombre):
         mensaje = f'{producto.nombre} añadido a la cesta.'
 
     # Responder con un mensaje de confirmación en formato JSON
-    return JsonResponse({
-        'mensaje': mensaje,
-        'cantidad': cesta_producto.cantidad
-    })
+    messages.success(request, mensaje)  # Usamos success para mostrar un mensaje positivo
 
-def eliminar_producto(request, producto_id):
-    # Eliminar un producto de la cesta del usuario autenticado
-     # Obtener el producto en la cesta del usuario
-    producto_cesta = get_object_or_404(ProductoCesta, usuario=request.user, producto_id=producto_id)
-
-    # Obtener la cantidad que se quiere eliminar desde el formulario (por ejemplo, 'cantidad_a_eliminar')
-    cantidad_a_eliminar = int(request.POST.get('cantidad_a_eliminar', 1))
-
-    if producto_cesta.cantidad > cantidad_a_eliminar:
-        # Si hay más de la cantidad que queremos eliminar, solo restamos
-        producto_cesta.cantidad -= cantidad_a_eliminar
-        producto_cesta.save()
+    if(vista_origen=='/vistaProducto/'):
+        return  JsonResponse({'mensaje': mensaje, 'cantidad': cantidad})
+        # Redirigir a la cesta con el mensaje
     else:
-        # Si la cantidad es igual o menor, eliminamos el producto de la cesta
-        producto_cesta.delete()
-
-    return redirect('cesta')
-
-def eliminar_producto_no_autenticado(request, producto_id):
-    # Eliminar un producto de la cesta para un usuario no autenticado (basado en la sesión)
-    session_key = request.session.session_key
-    if not session_key:
-        request.session.create()
+        return redirect('cesta')
     
-     # Obtener el producto en la cesta del usuario
-    producto_cesta = get_object_or_404(ProductoCesta, usuario=request.user, producto_id=producto_id)
+def eliminar_producto(request, producto_id):
+    if request.user.is_authenticated:
+        producto_cesta = get_object_or_404(ProductoCesta, usuario=request.user, producto_id=producto_id)
+    else:
+        session_key = request.session.session_key
+        if not session_key:
+            request.session.create()
+        producto_cesta = get_object_or_404(ProductoCesta, session_key=session_key, producto_id=producto_id)
 
-    # Obtener la cantidad que se quiere eliminar desde el formulario (por ejemplo, 'cantidad_a_eliminar')
     cantidad_a_eliminar = int(request.POST.get('cantidad_a_eliminar', 1))
 
     if producto_cesta.cantidad > cantidad_a_eliminar:
-        # Si hay más de la cantidad que queremos eliminar, solo restamos
         producto_cesta.cantidad -= cantidad_a_eliminar
         producto_cesta.save()
     else:
-        # Si la cantidad es igual o menor, eliminamos el producto de la cesta
         producto_cesta.delete()
 
     return redirect('cesta')

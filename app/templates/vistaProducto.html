@@ -58,6 +58,7 @@
             <!-- Botones para aumentar y disminuir la cantidad -->
             <button type="button" class="btn-cantidad" onclick="cambiarCantidad('{{ producto.nombre }}', -1)">-</button>
             <input type="text" name="cantidad" id="cantidad-{{ producto.nombre }}" value="1" readonly>
+            <input type="hidden" name="origen_vista" value="{{ request.path }}">
             <button type="button" class="btn-cantidad" onclick="cambiarCantidad('{{ producto.nombre }}', 1)">+</button>
             
             <!-- Botón para agregar a la cesta -->
