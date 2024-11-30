@@ -145,7 +145,15 @@ def pasarela_pago(request):
 
     precio = sum(producto.producto.precio * producto.cantidad for producto in productos)
 
-    return render(request, 'pasarelaPago.html', {'precio': precio})
+    compra=True
+    for pc in productos:
+        if pc.producto.cantidad<pc.cantidad:
+            compra=False; break
+
+    if compra:
+        return render(request, 'cesta.html', {'productos': productos,'precio': precio})
+    else: 
+        return cesta(request)
 def cesta(request):
     if request.user.is_authenticated:
         productos_cesta = ProductoCesta.objects.filter(usuario=request.user)
@@ -158,11 +166,7 @@ def cesta(request):
     
     # Calcular el total
     total_precio = sum(item.producto.precio * item.cantidad for item in productos_cesta)
-
-    return render(request, 'cesta.html', {
-        'productos': productos_cesta,
-        'precio': total_precio
-    })
+    return render(request, 'cesta.html', {'productos': productos_cesta,'precio': total_precio})   
 
 def agregar_a_cesta(request, producto_nombre):
     producto = get_object_or_404(Producto, nombre=producto_nombre)
