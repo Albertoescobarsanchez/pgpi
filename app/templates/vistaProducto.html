@@ -51,6 +51,9 @@
           <p>{{ producto.descripcion }}</p>
           <img src="{% static 'images/' %}{{ producto.imagen }}" alt="{{ producto.nombre }}" width="200">
       
+          {% if producto.cantidad == 0 %}
+            <p style="color: red;">¡No hay stock disponible!</p>
+          {% else %}
           <!-- Formulario para agregar el producto a la cesta -->
           <form class="form-cesta" data-producto="{{ producto.nombre }}" method="post" action="{% url 'agregar_a_cesta' producto.nombre %}" id="form-cesta-{{ producto.nombre }}">
             {% csrf_token %}
@@ -70,6 +73,7 @@
             <strong>¡Producto añadido!</strong> Cantidad: <span id="cantidad-alerta-{{ producto.nombre }}">1</span>
           </div>
         </div>
+        {% endif %}
       {% endfor %}
     {% endblock %}
     
