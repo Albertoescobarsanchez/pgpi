@@ -61,16 +61,6 @@ def register(request):
 
     return render(request, 'register.html', {'form': form})
 
-def cesta(request):
-    productos=None
-    if request.user.is_authenticated:
-        productos = ProductoCesta.objects.filter(usuario=request.user)
-    else:
-        productos = []
-    precio=sum(producto.producto.precio*producto.cantidad for producto in productos)
-    
-    return render(request, 'cesta.html',{'productos': productos,'precio': precio})
-
 def vistaProducto(request):
     query = request.GET.get('search', '')
     query_type = request.GET.get('search_type', 'nombre')  # Default search type is 'nombre'
@@ -145,9 +135,17 @@ def pasarela_pago(request):
         return JsonResponse({'success': False})
 
     productos = ProductoCesta.objects.filter(usuario=request.user)
+    compra=True
+    for pc in productos:
+        if pc.producto.cantidad<pc.cantidad:
+            compra=False; break
+        
     precio = sum(producto.producto.precio * producto.cantidad for producto in productos)
-
-    return render(request, 'pasarelaPago.html', {'precio': precio})
+    if compra: 
+        return render(request, 'pasarelaPago.html', {'precio': precio})
+    else:
+        return ver_cesta(request)
+    
 def ver_cesta(request):
     # Si el usuario está autenticado, usamos su id. Si no, usamos la sesión
     if request.user.is_authenticated:
@@ -211,7 +209,7 @@ def eliminar_producto(request, producto_id):
         # Si la cantidad es igual o menor, eliminamos el producto de la cesta
         producto_cesta.delete()
 
-    return redirect('ver_cesta')
+    return redirect('cesta')
 
 def eliminar_producto_no_autenticado(request, producto_id):
     # Eliminar un producto de la cesta para un usuario no autenticado (basado en la sesión)
@@ -233,7 +231,7 @@ def eliminar_producto_no_autenticado(request, producto_id):
         # Si la cantidad es igual o menor, eliminamos el producto de la cesta
         producto_cesta.delete()
 
-    return redirect('ver_cesta')
+    return redirect('cesta')
 
 
 def pedidos(request):

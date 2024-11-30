@@ -44,6 +44,6 @@ def create_initial_users(sender, **kwargs):
 @receiver(post_migrate)
 def agregar_productos(sender, **kwargs):
     if not Producto.objects.exists():  # Evitar duplicar productos
-        Producto.objects.create(nombre="Velón Mágico", descripcion="Velón especial para rituales.",imagen='vela.jpg',precio=9.99,cantidad=1,categoria=" ")
-        Producto.objects.create(nombre="Amuleto de la Suerte", descripcion="Amuleto protector.",imagen='piedras.jpg',precio=14.99,cantidad=1,categoria=" ")
-        Producto.objects.create(nombre="Tarot", descripcion="Baraja de cartas de tarot.",imagen='tarot.jpg',precio=29.99,cantidad=1,categoria=" ")
+        Producto.objects.create(nombre="Velón Mágico", descripcion="Velón especial para rituales.",imagen='vela.jpg',precio=9.99,cantidad=10,categoria=" ")
+        Producto.objects.create(nombre="Amuleto de la Suerte", descripcion="Amuleto protector.",imagen='piedras.jpg',precio=14.99,cantidad=10,categoria=" ")
+        Producto.objects.create(nombre="Tarot", descripcion="Baraja de cartas de tarot.",imagen='tarot.jpg',precio=29.99,cantidad=10,categoria=" ")
