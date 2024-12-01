@@ -283,3 +283,17 @@ def pedidos(request):
             })
 
     return render(request, 'pedidos.html', {'pedidos_info': pedidos_info, 'no_pedidos': no_pedidos})
+
+def productos_por_categoria(request):
+
+    productos = Producto.objects.all().order_by('categoria', 'nombre')
+    categorias = {}
+    
+    # Agrupar los productos por categoría
+    for producto in productos:
+        if producto.categoria not in categorias:
+            categorias[producto.categoria] = []
+        categorias[producto.categoria].append(producto)
+    
+    # Renderizar la vista
+    return render(request, 'catalogo.html', {'categorias': categorias})

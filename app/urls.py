@@ -34,8 +34,7 @@ urlpatterns = [
     path('cesta/', views.cesta, name='cesta'),
     path('eliminar-producto/<int:producto_id>/', views.eliminar_producto, name='eliminar_producto'),
     path('pedidos/',views.pedidos,name='pedidos'),
-
-
+    path('catalogo/',views.productos_por_categoria,name='catalogo'),
 
 ]
 
