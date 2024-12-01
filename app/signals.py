@@ -51,6 +51,6 @@ def agregar_productos(sender, **kwargs):
         Producto.objects.create(nombre="Tarot", descripcion="Baraja de cartas de tarot.", imagen='tarot.jpg', precio=29.99, cantidad=10, categoria="Tarot y Herramientas Espirituales")
         Producto.objects.create(nombre="Péndulo de Cuarzo", descripcion="Péndulo para lecturas espirituales.", imagen='pendulo.jpg', precio=24.99, cantidad=8, categoria="Tarot y Herramientas Espirituales")
         Producto.objects.create(nombre="Aceite de Lavanda", descripcion="Aceite esencial para relajación.", imagen='lavanda.jpg', precio=12.99, cantidad=25, categoria="Aceites y Esencias")
-        Producto.objects.create(nombre="Esencia de Mirra", descripcion="Esencia para rituales y limpieza energética.", imagen='mirra.jpg', precio=14.49, cantidad=12, categoria="Aceites y Esencias")
+        Producto.objects.create(nombre="Esencia de Mirra", descripcion="Esencia para rituales y limpieza energética.", imagen='mirra.jpg', precio=14.49, cantidad=0, categoria="Aceites y Esencias")
         Producto.objects.create(nombre="Taza con Símbolos", descripcion="Taza decorada con símbolos espirituales.", imagen='taza.jpg', precio=9.99, cantidad=18, categoria="Decoración Espiritual")
         Producto.objects.create(nombre="Tapiz de Mandala", descripcion="Tapiz con diseño de mandala para meditación.", imagen='mandala.jpg', precio=39.99, cantidad=5, categoria="Decoración Espiritual")
