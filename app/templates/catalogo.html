@@ -87,7 +87,7 @@
                 <p style="color: red;">¡No hay stock disponible!</p>
             {% else %}
                 <p>Cantidad: {{producto.cantidad}}</p>
-            {% endif %}
+            
           <p class="price">${{ producto.precio }}</p>
           <a href="{% url 'vistaProducto' %}?search={{ producto.nombre }}&search_type=nombre">
             <button type="button" style="padding: 10px 15px; background-color: #FFD700; border: none; border-radius: 5px; cursor: pointer;">
