@@ -2,14 +2,11 @@
 
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Tienda Esotérica</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cesta de Compras</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}"> <!-- Cargar solo los estilos del header -->
 
-    <!-- Vincular el archivo CSS externo -->
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
     <!-- Header con logo y texto -->
@@ -71,39 +68,37 @@
         </form>
     </div>
 
-    <!-- Contenido principal -->
-    <div class="main-content">
-        <h1>Productos Destacados</h1>
+    <h1>Productos Ordenados por Categoría</h1>
 
-        <!-- Grid de productos -->
-        <div class="product-grid">
-            {% for producto in productos %}
-            <div class="product-card">
-                <h2>{{ producto.nombre }}</h2>
-                <p>{{ producto.descripcion }}</p>
-                {% if producto.imagen %}
-                    <img src="{% static 'images/' %}{{ producto.imagen }}" alt="{{ producto.nombre }}">
-                {% else %}
-                    <p>No hay imagen disponible</p>
-                {% endif %}
-                {% if producto.cantidad == 0 %}
-                    <p style="color: red;">¡No hay stock disponible!</p>
-                {% else %}
-                     <p>Cantidad: {{producto.cantidad}}</p>
-                {% endif %}
-                <p class="price">${{ producto.precio }}</p>
-                <a href="{% url 'vistaProducto' %}?search={{ producto.nombre }}&search_type=nombre">
-                    <button type="button" style="padding: 10px 15px; background-color: #FFD700; border: none; border-radius: 5px; cursor: pointer;">
-                        Ver Producto
-                    </button>
-                </a>
-            </div>
-            {% empty %}
-            <div class="product-card">
-                <p>No hay productos disponibles.</p>
-            </div>
-            {% endfor %}
+    {% for categoria, productos in categorias.items %}
+    <section>
+      <h2>{{ categoria }}</h2>
+      <div class="product-grid">
+        {% for producto in productos %}
+        <div class="product-card">
+          <h2>{{ producto.nombre }}</h2>
+          <p>{{ producto.descripcion }}</p>
+          {% if producto.imagen %}
+            <img src="{% static 'images/' %}{{ producto.imagen }}" alt="{{ producto.nombre }}">
+          {% else %}
+            <p>No hay imagen disponible</p>
+          {% endif %}
+            {% if producto.cantidad == 0 %}
+                <p style="color: red;">¡No hay stock disponible!</p>
+            {% else %}
+                <p>Cantidad: {{producto.cantidad}}</p>
+            {% endif %}
+          <p class="price">${{ producto.precio }}</p>
+          <a href="{% url 'vistaProducto' %}?search={{ producto.nombre }}&search_type=nombre">
+            <button type="button" style="padding: 10px 15px; background-color: #FFD700; border: none; border-radius: 5px; cursor: pointer;">
+              Ver Producto
+            </button>
+          </a>
         </div>
-    </div>
-</body>
+        {% endfor %}
+      </div>
+    </section>
+  {% endfor %}
+
 </html>
+</body>

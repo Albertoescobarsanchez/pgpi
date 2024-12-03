@@ -26,18 +26,15 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('login/', views.login_user, name='login'),
     path('register/',views.register, name='register'),
-    path('cesta/', views.cesta, name='cesta'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('vistaProducto/', views.vistaProducto, name='vistaProducto'),
     path('buscar/', views.buscar_productos, name='buscar_productos'),
     path('pasarelaPago/',views.pasarela_pago,name='pasarelaPago'),
     path('agregar-a-cesta/<str:producto_nombre>/', views.agregar_a_cesta, name='agregar_a_cesta'),
-    path('ver-cesta/', views.ver_cesta, name='ver_cesta'),    path('ver-cesta/', views.ver_cesta, name='ver_cesta'),
+    path('cesta/', views.cesta, name='cesta'),
     path('eliminar-producto/<int:producto_id>/', views.eliminar_producto, name='eliminar_producto'),
-    path('eliminar-producto-no-autenticado/<int:producto_id>/', views.eliminar_producto_no_autenticado, name='eliminar_producto_no_autenticado'),
     path('pedidos/',views.pedidos,name='pedidos'),
-
-
+    path('catalogo/',views.productos_por_categoria,name='catalogo'),
 
 ]
 

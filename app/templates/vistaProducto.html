@@ -37,6 +37,7 @@
         <a href="/">Inicio</a>
         <a href="/cesta">Cesta</a>
         <a href="/pedidos">Mis Pedidos</a>
+        <a href="/catalogo">Catalogo</a>
     </nav>
 
     <!-- Formulario de búsqueda (mantenemos el formulario aquí también) -->
@@ -51,6 +52,11 @@
           <p>{{ producto.descripcion }}</p>
           <img src="{% static 'images/' %}{{ producto.imagen }}" alt="{{ producto.nombre }}" width="200">
       
+          {% if producto.cantidad == 0 %}
+              <p style="color: red;">¡No hay stock disponible!</p>
+          {% else %}
+              <p>Cantidad: {{producto.cantidad}}</p>
+          {% endif %}
           <!-- Formulario para agregar el producto a la cesta -->
           <form class="form-cesta" data-producto="{{ producto.nombre }}" method="post" action="{% url 'agregar_a_cesta' producto.nombre %}" id="form-cesta-{{ producto.nombre }}">
             {% csrf_token %}
@@ -58,6 +64,7 @@
             <!-- Botones para aumentar y disminuir la cantidad -->
             <button type="button" class="btn-cantidad" onclick="cambiarCantidad('{{ producto.nombre }}', -1)">-</button>
             <input type="text" name="cantidad" id="cantidad-{{ producto.nombre }}" value="1" readonly>
+            <input type="hidden" name="origen_vista" value="{{ request.path }}">
             <button type="button" class="btn-cantidad" onclick="cambiarCantidad('{{ producto.nombre }}', 1)">+</button>
             
             <!-- Botón para agregar a la cesta -->
@@ -69,6 +76,7 @@
             <strong>¡Producto añadido!</strong> Cantidad: <span id="cantidad-alerta-{{ producto.nombre }}">1</span>
           </div>
         </div>
+        
       {% endfor %}
     {% endblock %}
     
