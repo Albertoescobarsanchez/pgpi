@@ -65,7 +65,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 # Configuración de la base de datos
 DATABASES = {
-    'default': env.db('DATABASE_URL', default='postgres://localhost/tienda_esoterica')
+     'default': env.db(),
 }
 
 # Validación de contraseñas
