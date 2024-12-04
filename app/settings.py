@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'unsafe-secret-key')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 
-ALLOWED_HOSTS = ['https://esoterus.onrender.com']
+ALLOWED_HOSTS = ['esoterus.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -79,7 +79,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL', ''),  # Render proporciona esta variable
+        default=os.getenv('DATABASE_URL', 'postgresql://tienda_esoterica_esoterus_user:o0C5VE2wsypLpcUGBqjPuos8aNlkz6oe@dpg-ct81a9pu0jms73atigdg-a.frankfurt-postgres.render.com/tienda_esoterica_esoterus '),  # Render proporciona esta variable
         conn_max_age=600
     )
 }
