@@ -1,0 +1,21 @@
+# Exported from Render on 2024-12-04T11:58:58Z
+services:
+- type: web
+  name: Esoterus
+  runtime: python
+  repo: https://github.com/Albertoescobarsanchez/pgpi
+  plan: free
+  envVars:
+  - key: ALLOWED_HOSTS
+    sync: false
+  - key: SECRET_KEY
+    sync: false
+  - key: DEBUG
+    sync: false
+  - key: DATABASE_URL
+    sync: false
+  region: frankfurt
+  buildCommand: pip install -r requirements.txt && python manage.py collectstatic
+    --no-input
+  startCommand: gunicorn app.wsgi:application
+version: "1"
