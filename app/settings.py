@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'unsafe-secret-key')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['https://esoterus.onrender.com']
 
 
 # Application definition
